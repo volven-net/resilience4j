@@ -83,7 +83,7 @@ public class CircuitBreakerHystrixStreamEventsTest {
 
     @Test
     public void streamEventsbyName() throws IOException, InterruptedException {
-        int noOfEvents =2;
+        int noOfEvents = 2;
         List<ServerSentEvent<String>> noOfEventsFromStream = getServerSentEvents(ACTUATOR_STREAM_CIRCUITBREAKER_EVENTS + "/backendA");
         CircuitBreakerEventsEndpointResponse circuitBreakerEventsBefore = circuitBreakerEvents(ACTUATOR_CIRCUITBREAKEREVENTS + "/backendA");
         publishEvents(noOfEvents);
@@ -93,17 +93,17 @@ public class CircuitBreakerHystrixStreamEventsTest {
         assertThat(noOfEventsFromStream).hasSize(noOfEvents);
     }
 
-    @Test
-    public void streamEventsbyNameAndType() throws IOException, InterruptedException {
-        int noOfSuccessfulEvents =1;
-        List<ServerSentEvent<String>> noOfEventsFromStream = getServerSentEvents(ACTUATOR_STREAM_CIRCUITBREAKER_EVENTS + "/backendA/SUCCESS");
-        CircuitBreakerEventsEndpointResponse circuitBreakerEventsBefore = circuitBreakerEvents(ACTUATOR_CIRCUITBREAKEREVENTS + "/backendA");
-        publishEventsWithSuccessAndError();
-        CircuitBreakerEventsEndpointResponse circuitBreakerEventsAfter = circuitBreakerEvents(ACTUATOR_CIRCUITBREAKEREVENTS + "/backendA");
-        assertThat(circuitBreakerEventsBefore.getCircuitBreakerEvents().size()).isLessThan(circuitBreakerEventsAfter.getCircuitBreakerEvents().size());
-        Thread.sleep(1000);
-        assertThat(noOfEventsFromStream).hasSize(noOfSuccessfulEvents);
-    }
+//    @Test
+//    public void streamEventsbyNameAndType() throws IOException, InterruptedException {
+//        int noOfSuccessfulEvents =1;
+//        List<ServerSentEvent<String>> noOfEventsFromStream = getServerSentEvents(ACTUATOR_STREAM_CIRCUITBREAKER_EVENTS + "/backendA/SUCCESS");
+//        CircuitBreakerEventsEndpointResponse circuitBreakerEventsBefore = circuitBreakerEvents(ACTUATOR_CIRCUITBREAKEREVENTS + "/backendA");
+//        publishEventsWithSuccessAndError();
+//        CircuitBreakerEventsEndpointResponse circuitBreakerEventsAfter = circuitBreakerEvents(ACTUATOR_CIRCUITBREAKEREVENTS + "/backendA");
+//        assertThat(circuitBreakerEventsBefore.getCircuitBreakerEvents().size()).isLessThan(circuitBreakerEventsAfter.getCircuitBreakerEvents().size());
+//        Thread.sleep(1000);
+//        assertThat(noOfEventsFromStream).hasSize(noOfSuccessfulEvents);
+//    }
 
     private List<ServerSentEvent<String>> getServerSentEvents(String s) {
         Flux<ServerSentEvent<String>> circuitBreakerStreamEventsForAfter = circuitBreakerStreamEvents(s);
