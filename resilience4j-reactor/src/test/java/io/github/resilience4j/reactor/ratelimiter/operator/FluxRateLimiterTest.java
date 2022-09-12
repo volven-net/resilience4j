@@ -46,7 +46,7 @@ public class FluxRateLimiterTest {
 
     @Test
     public void shouldEmitEvent() {
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofSeconds(0).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofSeconds(0).toNanos());
 
         StepVerifier.create(
             Flux.just("Event 1", "Event 2")
@@ -58,7 +58,7 @@ public class FluxRateLimiterTest {
 
     @Test
     public void shouldDelaySubscription() {
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofMillis(50).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofMillis(50).toNanos());
 
         StepVerifier.create(
             Flux.error(new IOException("BAM!"))
@@ -70,7 +70,7 @@ public class FluxRateLimiterTest {
 
     @Test
     public void shouldPropagateError() {
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofSeconds(0).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofSeconds(0).toNanos());
 
         StepVerifier.create(
             Flux.error(new IOException("BAM!"))
@@ -83,7 +83,7 @@ public class FluxRateLimiterTest {
 
     @Test
     public void shouldEmitRequestNotPermittedException() {
-        given(rateLimiter.reservePermission()).willReturn(-1L);
+        given(rateLimiter.reservePermission(1)).willReturn(-1L);
 
         StepVerifier.create(
             Flux.just("Event")
@@ -95,7 +95,7 @@ public class FluxRateLimiterTest {
 
     @Test
     public void shouldEmitRequestNotPermittedExceptionEvenWhenErrorDuringSubscribe() {
-        given(rateLimiter.reservePermission()).willReturn(-1L);
+        given(rateLimiter.reservePermission(1)).willReturn(-1L);
 
         StepVerifier.create(
             Flux.error(new IOException("BAM!"))

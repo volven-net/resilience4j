@@ -28,7 +28,7 @@ import java.time.Duration;
 
 import static io.github.resilience4j.core.ResultUtils.isFailedAndThrown;
 import static io.github.resilience4j.core.ResultUtils.isSuccessfulAndReturned;
-import static io.github.resilience4j.reactor.ratelimiter.operator.OverloadException.*;
+import static io.github.resilience4j.reactor.ratelimiter.operator.OverloadException.SpecificOverloadException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -39,7 +39,7 @@ public class MonoRateLimiterTest {
     @Test
     public void shouldEmitEvent() {
         RateLimiter rateLimiter = mock(RateLimiter.class, RETURNS_DEEP_STUBS);
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofSeconds(0).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofSeconds(0).toNanos());
 
         StepVerifier.create(
             Mono.just("Event")
@@ -51,7 +51,7 @@ public class MonoRateLimiterTest {
     @Test
     public void shouldPropagateError() {
         RateLimiter rateLimiter = mock(RateLimiter.class, RETURNS_DEEP_STUBS);
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofSeconds(0).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofSeconds(0).toNanos());
 
         StepVerifier.create(
             Mono.error(new IOException("BAM!"))
@@ -64,7 +64,7 @@ public class MonoRateLimiterTest {
     @Test
     public void shouldDelaySubscription() {
         RateLimiter rateLimiter = mock(RateLimiter.class, RETURNS_DEEP_STUBS);
-        given(rateLimiter.reservePermission()).willReturn(Duration.ofMillis(50).toNanos());
+        given(rateLimiter.reservePermission(1)).willReturn(Duration.ofMillis(50).toNanos());
 
         StepVerifier.create(
             Mono.error(new IOException("BAM!"))
@@ -78,7 +78,7 @@ public class MonoRateLimiterTest {
     @Test
     public void shouldEmitErrorWithBulkheadFullException() {
         RateLimiter rateLimiter = mock(RateLimiter.class, RETURNS_DEEP_STUBS);
-        given(rateLimiter.reservePermission()).willReturn(-1L);
+        given(rateLimiter.reservePermission(1)).willReturn(-1L);
 
         StepVerifier.create(
             Mono.just("Event")
@@ -91,7 +91,7 @@ public class MonoRateLimiterTest {
     @Test
     public void shouldEmitRequestNotPermittedExceptionEvenWhenErrorDuringSubscribe() {
         RateLimiter rateLimiter = mock(RateLimiter.class, RETURNS_DEEP_STUBS);
-        given(rateLimiter.reservePermission()).willReturn(-1L);
+        given(rateLimiter.reservePermission(1)).willReturn(-1L);
 
         StepVerifier.create(
             Mono.error(new IOException("BAM!"))

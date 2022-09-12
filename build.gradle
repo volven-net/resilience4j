@@ -2,8 +2,10 @@ plugins {
     id "org.sonarqube" version "3.2.0"
     id 'org.asciidoctor.convert' version '1.6.0'
     id "org.gradle.test-retry" version "1.2.1"
-    id "io.github.gradle-nexus.publish-plugin"  version "1.1.0"
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
     id "me.champeau.jmh" version "0.6.5"
+    id 'java-library'
+    id 'maven-publish'
     id 'idea'
 }
 
@@ -27,24 +29,37 @@ ext {
     }
 }
 
-nexusPublishing {
+publishing {
+
     repositories {
-        sonatype {
-            stagingProfileId = '64e8d6879f4e95'
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/volven-net/resilience4j")
+            credentials {
+                username = project.findProperty("github_username") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("github_token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
+            from components.java
         }
     }
 }
 
-configure(project.coreProjects) {
-    apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'maven-publish'
-    apply plugin: 'signing'
-    apply from: "${rootDir}/publishing.gradle"
-    apply plugin: "org.gradle.test-retry"
-    apply plugin: 'me.champeau.jmh'
+    configure(project.coreProjects) {
+        apply plugin: 'java'
+        apply plugin: 'java-library'
+        apply plugin: 'maven-publish'
+        apply plugin: 'signing'
+        apply from: "${rootDir}/publishing.gradle"
+        apply plugin: "org.gradle.test-retry"
+        apply plugin: 'me.champeau.jmh'
 
-    tasks.withType(Test).all {
+        tasks.withType(Test).all {
         if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
             jvmArgs += [
                     "-XX:+AllowRedefinitionToAddDeleteMethods"
