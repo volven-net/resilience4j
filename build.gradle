@@ -57,7 +57,7 @@ ext {
 
                 publications {
                     maven(MavenPublication) {
-                        version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
+//                        version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
                         from components.java
                     }
                 }
