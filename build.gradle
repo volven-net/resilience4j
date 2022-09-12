@@ -27,28 +27,6 @@ ext {
     }
 }
 
-subprojects {
-    apply plugin: "maven-publish"
-    publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/volven-net/resilience4j")
-                credentials {
-                    username = project.findProperty("github_username") ?: System.getenv("GITHUB_ACTOR")
-                    password = project.findProperty("github_token") ?: System.getenv("GITHUB_TOKEN")
-                }
-            }
-        }
-        publications {
-            maven(MavenPublication) {
-                version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
-                from components.java
-            }
-        }
-    }
-}
-
     configure(project.coreProjects) {
         apply plugin: 'java'
         apply plugin: 'java-library'
@@ -59,12 +37,32 @@ subprojects {
         apply plugin: 'me.champeau.jmh'
 
         tasks.withType(Test).all {
-        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
-            jvmArgs += [
-                    "-XX:+AllowRedefinitionToAddDeleteMethods"
-            ]
+            if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
+                jvmArgs += [
+                        "-XX:+AllowRedefinitionToAddDeleteMethods"
+                ]
+            }
+            publishing {
+
+                repositories {
+                    maven {
+                        name = "GitHubPackages"
+                        url = uri("https://maven.pkg.github.com/volven-net/resilience4j")
+                        credentials {
+                            username = project.findProperty("github_username") ?: System.getenv("GITHUB_ACTOR")
+                            password = project.findProperty("github_token") ?: System.getenv("GITHUB_TOKEN")
+                        }
+                    }
+                }
+
+                publications {
+                    maven(MavenPublication) {
+                        version "1.7.1-VOLVEN"
+                        from components.java
+                    }
+                }
+            }
         }
-    }
 
 
     dependencies {

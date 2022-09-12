@@ -43,19 +43,19 @@ tasks.withType(Sign) {
     onlyIf { !version.endsWith("SNAPSHOT") }
 }
 
-signing {
-    sign publishing.publications
-}
+//signing {
+//    sign publishing.publications
+//}
 publishing {
     publications {
         resilience4j(MavenPublication) {
             from components.java
             pom.withXml {
-                def devs = ['RobWin': 'Robert Winkler',
+                def devs = ['RobWin'     : 'Robert Winkler',
                             'storozhukBM': 'Bogdan Storozhuk',
-                            'Romeh': 'Mahmoud Romeh',
-                            'dlsrb6342': 'Ingyu Hwhang',
-                            'Hexmind': 'Tomasz Skowroński',
+                            'Romeh'      : 'Mahmoud Romeh',
+                            'dlsrb6342'  : 'Ingyu Hwhang',
+                            'Hexmind'    : 'Tomasz Skowroński',
                             'drmaas': 'Dan Maas']
                 def root = asNode()
 
