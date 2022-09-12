@@ -42,7 +42,8 @@ subprojects {
         }
         publications {
             maven(MavenPublication) {
-                from(components.java)
+                version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
+                from components.java
             }
         }
     }
