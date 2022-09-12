@@ -12,7 +12,7 @@ apply from: "${rootDir}/libraries.gradle"
 allprojects {
     apply plugin: 'jacoco'
 
-    version = '1.7.1-VOLVEN'
+    version = '1.8.0-SNAPSHOT'
     group = 'io.github.resilience4j'
     description = 'Resilience4j is a lightweight, easy-to-use fault tolerance library designed for Java8 and functional programming'
 
@@ -57,7 +57,7 @@ ext {
 
                 publications {
                     maven(MavenPublication) {
-                        version "1.7.1-VOLVEN"
+                        version System.getenv("APP_VERSION") ?: "LOCAL-SNAPSHOT"
                         from components.java
                     }
                 }
